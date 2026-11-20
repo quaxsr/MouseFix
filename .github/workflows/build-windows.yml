@@ -1,0 +1,33 @@
+name: Build Windows
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # AOT（PublishAot）、单文件（PublishSingleFile）、自包含与 win-x64 由 csproj 属性驱动
+      - name: Publish
+        run: dotnet publish MouseRemapper/MouseRemapper.csproj -c Release -r win-x64 --self-contained true
+
+      # WinExe 最终产物：publish 目录下的 MouseRemapper.exe（app.manifest 已内嵌 requireAdministrator）
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MouseRemapper-win-x64
+          path: MouseRemapper/bin/Release/net8.0/win-x64/publish/MouseRemapper.exe
+          if-no-files-found: error
