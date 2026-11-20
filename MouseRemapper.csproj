@@ -1,21 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- WinExe：彻底去掉控制台黑框 -->
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <!-- 纯 P/Invoke、无反射，NativeAOT 兼容 -->
     <PublishAot>true</PublishAot>
-    <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
-    <!-- requireAdministrator 提权清单，解决 UIPI 拦截导致系统 UI（最大化/关闭按钮）点不动 -->
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <!-- JSON 解析使用 System.Text.Json JsonSerializerContext 源生成模式（反射序列化在 NativeAOT 下会失败），无需任何第三方 NuGet 包 -->
-    <Nullable>enable</Nullable>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>embedded</DebugType>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!-- 低层钩子回调使用不安全指针解引用 MSLLHOOKSTRUCT，零封送开销 -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
 </Project>
